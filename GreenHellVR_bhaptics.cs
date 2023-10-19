@@ -152,6 +152,58 @@ namespace GreenHellVR_bhaptics
         }
         #endregion
 
+        #region Environment
+
+        [HarmonyPatch(typeof(Player), "Update", new Type[] {  })]
+        public class bhaptics_PlayerUpdate
+        {
+            [HarmonyPostfix]
+            public static void Postfix(Player __instance, bool ___m_InWater)
+            {
+                if (___m_InWater) tactsuitVr.StartWater();
+                else tactsuitVr.StopWater();
+                
+            }
+        }
+
+        [HarmonyPatch(typeof(Inventory3DController), "BackpackInsert", new Type[] { typeof(Item), typeof(Hand) })]
+        public class bhaptics_InsertBackpack
+        {
+            [HarmonyPostfix]
+            public static void Postfix(Inventory3DController __instance, Hand hand)
+            {
+                if (hand == Hand.Left) tactsuitVr.PlaybackHaptics("StoreBackpack_L");
+                else tactsuitVr.PlaybackHaptics("StoreBackpack_R");
+            }
+        }
+
+        [HarmonyPatch(typeof(PlayerConditionModule), "Update", new Type[] {  })]
+        public class bhaptics_PlayerCondition
+        {
+            [HarmonyPostfix]
+            public static void Postfix(PlayerConditionModule __instance)
+            {
+                if (__instance.m_HP <= 0.25 * __instance.m_MaxHP) tactsuitVr.StartHeartBeat();
+                else tactsuitVr.StopHeartBeat();
+                // if (__instance.m_Dirtiness <= 0.25 * (__instance.m_MaxDirtiness)) tactsuitVr.StartHeartBeat();
+                // if (__instance.m_Energy <= 0.25 * (__instance.m_MaxEnergy)) tactsuitVr.StartHeartBeat();
+                // if (__instance.m_Hydration <= 0.25 * (__instance.m_MaxHydration)) tactsuitVr.StartHeartBeat();
+                // if (__instance.m_Oxygen <= 0.25 * (__instance.m_MaxOxygen)) tactsuitVr.StartHeartBeat();
+            }
+        }
+
+        [HarmonyPatch(typeof(AyuhascaTrigger), "PsychotriaViridisInserted", new Type[] {  })]
+        public class bhaptics_Ayuhasca
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                tactsuitVr.PlaybackHaptics("AyuhascaTripStart");
+            }
+        }
+
+
+        #endregion
 
 
     }

@@ -11,6 +11,7 @@ namespace MyBhapticsTactsuit
     public class TactsuitVR
     {
         private static ManualResetEvent HeartBeat_mrse = new ManualResetEvent(false);
+        private static ManualResetEvent Water_mrse = new ManualResetEvent(false);
 
         public void HeartBeatFunc()
         {
@@ -19,6 +20,15 @@ namespace MyBhapticsTactsuit
                 HeartBeat_mrse.WaitOne();
                 Thread.Sleep(1000);
                 BhapticsSDK2.Play("heartbeat");
+            }
+        }
+        public void WaterFunc()
+        {
+            while (true)
+            {
+                Water_mrse.WaitOne();
+                Thread.Sleep(1000);
+                BhapticsSDK2.Play("water");
             }
         }
 
@@ -34,6 +44,8 @@ namespace MyBhapticsTactsuit
             
             Thread HeartBeatThread = new Thread(HeartBeatFunc);
             HeartBeatThread.Start();
+            Thread WaterThread = new Thread(WaterFunc);
+            WaterThread.Start();
         }
 
         public void LOG(string logStr)
@@ -197,6 +209,16 @@ namespace MyBhapticsTactsuit
             HeartBeat_mrse.Reset();
         }
 
+        public void StartWater()
+        {
+            Water_mrse.Set();
+        }
+
+        public void StopWater()
+        {
+            Water_mrse.Reset();
+        }
+
         public bool IsPlaying(String effect)
         {
             return BhapticsSDK2.IsPlaying(effect.ToLower());
@@ -216,6 +238,7 @@ namespace MyBhapticsTactsuit
         public void StopThreads()
         {
             StopHeartBeat();
+            StopWater();
         }
 
 
