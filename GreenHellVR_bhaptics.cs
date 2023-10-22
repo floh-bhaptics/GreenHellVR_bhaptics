@@ -146,7 +146,7 @@ namespace GreenHellVR_bhaptics
                 float hitAngle;
                 float hitShift;
                 (hitAngle, hitShift) = getAngleAndShift(__instance.transform, info.m_HitDir);
-                if (hitShift >= 0.5f) { tactsuitVr.HeadShot(hitAngle); return; }
+                // if (hitShift >= 0.5f) { tactsuitVr.HeadShot(hitAngle); return; }
                 tactsuitVr.PlayBackHit(pattern, hitAngle, hitShift);
             }
         }
@@ -185,10 +185,11 @@ namespace GreenHellVR_bhaptics
             {
                 if (__instance.m_HP <= 0.25 * __instance.m_MaxHP) tactsuitVr.StartHeartBeat();
                 else tactsuitVr.StopHeartBeat();
-                // if (__instance.m_Dirtiness <= 0.25 * (__instance.m_MaxDirtiness)) tactsuitVr.StartHeartBeat();
-                // if (__instance.m_Energy <= 0.25 * (__instance.m_MaxEnergy)) tactsuitVr.StartHeartBeat();
-                // if (__instance.m_Hydration <= 0.25 * (__instance.m_MaxHydration)) tactsuitVr.StartHeartBeat();
-                // if (__instance.m_Oxygen <= 0.25 * (__instance.m_MaxOxygen)) tactsuitVr.StartHeartBeat();
+                if (__instance.m_Dirtiness <= 0.25 * (__instance.m_MaxDirtiness)) tactsuitVr.StartNecktingle();
+                else if (__instance.m_Energy <= 0.25 * (__instance.m_MaxEnergy)) tactsuitVr.StartNecktingle();
+                else if (__instance.m_Hydration <= 0.25 * (__instance.m_MaxHydration)) tactsuitVr.StartNecktingle();
+                else if (__instance.m_Oxygen <= 0.25 * (__instance.m_MaxOxygen)) tactsuitVr.StartNecktingle();
+                else tactsuitVr.StopNecktingle();
             }
         }
 
