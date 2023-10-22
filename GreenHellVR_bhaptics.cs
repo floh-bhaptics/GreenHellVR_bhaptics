@@ -166,7 +166,7 @@ namespace GreenHellVR_bhaptics
             }
         }
 
-        [HarmonyPatch(typeof(Inventory3DController), "BackpackInsert", new Type[] { typeof(Item), typeof(Hand) })]
+        [HarmonyPatch(typeof(Inventory3DController), "TryDropBackpack", new Type[] { typeof(Item), typeof(Hand) })]
         public class bhaptics_InsertBackpack
         {
             [HarmonyPostfix]
@@ -177,13 +177,44 @@ namespace GreenHellVR_bhaptics
             }
         }
 
+        [HarmonyPatch(typeof(RainManager), "ScenarioStartRain", new Type[] {  })]
+        public class bhaptics_StartRain
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                tactsuitVr.StartRain();
+            }
+        }
+
+        [HarmonyPatch(typeof(RainManager), "ScenarioStopRain", new Type[] { })]
+        public class bhaptics_StopRain
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                tactsuitVr.StopRain();
+            }
+        }
+
+        [HarmonyPatch(typeof(RainManager), "ScenarioBlockRain", new Type[] { })]
+        public class bhaptics_BlockRain
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                tactsuitVr.StopRain();
+            }
+        }
+
         [HarmonyPatch(typeof(PlayerConditionModule), "Update", new Type[] {  })]
         public class bhaptics_PlayerCondition
         {
             [HarmonyPostfix]
             public static void Postfix(PlayerConditionModule __instance)
             {
-                if (__instance.m_HP <= 0.25 * __instance.m_MaxHP) tactsuitVr.StartHeartBeat();
+                if (__instance.m_HP <= 0.01 * __instance.m_MaxHP) tactsuitVr.StopHeartBeat();
+                else if (__instance.m_HP <= 0.25 * __instance.m_MaxHP) tactsuitVr.StartHeartBeat();
                 else tactsuitVr.StopHeartBeat();
                 if (__instance.m_Dirtiness <= 0.25 * (__instance.m_MaxDirtiness)) tactsuitVr.StartNecktingle();
                 else if (__instance.m_Energy <= 0.25 * (__instance.m_MaxEnergy)) tactsuitVr.StartNecktingle();
@@ -200,6 +231,16 @@ namespace GreenHellVR_bhaptics
             public static void Postfix()
             {
                 tactsuitVr.PlaybackHaptics("AyuhascaTripStart");
+            }
+        }
+
+        [HarmonyPatch(typeof(Fire), "OnIgnitionFinished", new Type[] { })]
+        public class bhaptics_StartFire
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                tactsuitVr.PlaybackHaptics("StartCampFire");
             }
         }
 

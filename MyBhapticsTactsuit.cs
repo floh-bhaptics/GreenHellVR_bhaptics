@@ -13,6 +13,7 @@ namespace MyBhapticsTactsuit
         private static ManualResetEvent HeartBeat_mrse = new ManualResetEvent(false);
         private static ManualResetEvent Water_mrse = new ManualResetEvent(false);
         private static ManualResetEvent Necktingle_mrse = new ManualResetEvent(false);
+        private static ManualResetEvent Rain_mrse = new ManualResetEvent(false);
 
 
         public void HeartBeatFunc()
@@ -44,9 +45,19 @@ namespace MyBhapticsTactsuit
             }
         }
 
+        public void RainFunc()
+        {
+            while (true)
+            {
+                Water_mrse.WaitOne();
+                Thread.Sleep(3050);
+                BhapticsSDK2.Play("raining");
+            }
+        }
+
         public TactsuitVR()
         {
-            LOG("Starting HeartBeat, Water, and NeckTingle thread...");
+            LOG("Starting HeartBeat, Water, Rain, and NeckTingle thread...");
             var res = BhapticsSDK2.Initialize("0fV9Kade5nuBbn40uHhr", "SYu6gMVrlO6gcr988Wnz", "");
 
             if (res > 0)
@@ -60,6 +71,8 @@ namespace MyBhapticsTactsuit
             WaterThread.Start();
             Thread NecktingleThread = new Thread(NecktingleFunc);
             NecktingleThread.Start();
+            Thread RainThread = new Thread(RainFunc);
+            RainThread.Start();
         }
 
         public void LOG(string logStr)
@@ -112,6 +125,7 @@ namespace MyBhapticsTactsuit
         public void StopWater()
         {
             Water_mrse.Reset();
+            BhapticsSDK2.Stop("waterslushing");
         }
 
         public void StartNecktingle()
@@ -122,6 +136,18 @@ namespace MyBhapticsTactsuit
         public void StopNecktingle()
         {
             Necktingle_mrse.Reset();
+            BhapticsSDK2.Stop("necktingleshort");
+        }
+
+        public void StartRain()
+        {
+            Rain_mrse.Set();
+        }
+
+        public void StopRain()
+        {
+            Rain_mrse.Reset();
+            BhapticsSDK2.Stop("raining");
         }
 
         public bool IsPlaying(String effect)
@@ -144,6 +170,8 @@ namespace MyBhapticsTactsuit
         {
             StopHeartBeat();
             StopWater();
+            StopNecktingle();
+            StopRain();
         }
 
 
